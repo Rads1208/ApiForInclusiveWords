@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Inclusive Words Checker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        .form-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .form-container label {
+            font-weight: bold;
+        }
+
+        .form-container input[type="text"] {
+            padding: 5px;
+            margin-right: 10px;
+        }
+
+        .form-container button {
+            padding: 5px 10px;
+        }
+
+        #results {
+            margin: 20px 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+<h1>Inclusive Words Checker</h1>
+
+<div class="form-container">
+    <label for="inputString">Input String:</label>
+    <input type="text" id="inputString" name="inputString">
+    <button onclick="checkInclusiveWords()">Check</button>
+</div>
+
+<div id="results"></div>
+
+<script>
+        function checkInclusiveWords() {
+            var inputString = document.getElementById('inputString').value;
+
+            $.ajax({
+                url: '/check-inclusive-words',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(inputString),
+                success: function (response) {
+                    displayResults(response);
+                },
+                error: function (error) {
+                    console.log(error);
+                }
+            });
+        }
+
+        function displayResults(results) {
+            var resultsContainer = document.getElementById('results');
+            resultsContainer.innerHTML = '';
+
+            if (results.length === 0) {
+                resultsContainer.innerHTML = '<p>No inclusive words found.</p>';
+            } else {
+                var html = '<table><tr><th>Inclusive Word</th><th>Description</th><th>Alternate Words</th></tr>';
+                for (var i = 0; i < results.length; i++) {
+                    html += '<tr>';
+                    html += '<td>' + results[i].inclusiveWord + '</td>';
+                    html += '<td>' + results[i].description + '</td>';
+                    html += '<td>' + results[i].alternateWords + '</td>';
+                    html += '</tr>';
+                }
+                html += '</table>';
+                resultsContainer.innerHTML = html;
+            }
+        }
+    </script>
+</body>
+</html>
